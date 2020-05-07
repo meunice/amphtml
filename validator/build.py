@@ -173,6 +173,7 @@ def GenValidatorProtoascii(out_dir):
   assert re.match(r'^[a-zA-Z_\-0-9]+$', out_dir), 'bad out_dir: %s' % out_dir
 
   protoascii_segments = [open('validator-main.protoascii').read()]
+  protoascii_segments.append(open('validator-css.protoascii').read())
   extensions = glob.glob('extensions/*/validator-*.protoascii')
   # In the Github project, the extensions are located in a sibling directory
   # to the validator rather than a child directory.
@@ -320,9 +321,7 @@ def CompileValidatorMinified(out_dir):
       ],
       definitions=[],
       entry_points=[
-          'amp.validator.validateString',
-          'amp.validator.renderValidationResult',
-          'amp.validator.renderErrorMessage'
+          'amp.validator',
       ],
       output_file='%s/validator_minified.js' % out_dir)
   logging.info('... done')
@@ -335,10 +334,10 @@ def RunSmokeTest(out_dir):
     out_dir: output directory
   """
   logging.info('entering ...')
-  # Run index.js on the minimum valid amp and observe that it passes.
+  # Run cli.js on the minimum valid amp and observe that it passes.
   p = subprocess.Popen(
       [
-          'node', 'nodejs/index.js', '--validator_js',
+          'node', 'nodejs/cli.js', '--validator_js',
           '%s/validator_minified.js' % out_dir,
           'testdata/feature_tests/minimum_valid_amp.html', '--format=text'
       ],
@@ -350,10 +349,10 @@ def RunSmokeTest(out_dir):
     Die('Smoke test failed. returncode=%d stdout="%s" stderr="%s"' %
         (p.returncode, stdout, stderr))
 
-  # Run index.js on an empty file and observe that it fails.
+  # Run cli.js on an empty file and observe that it fails.
   p = subprocess.Popen(
       [
-          'node', 'nodejs/index.js', '--validator_js',
+          'node', 'nodejs/cli.js', '--validator_js',
           '%s/validator_minified.js' % out_dir,
           'testdata/feature_tests/empty.html', '--format=text'
       ],

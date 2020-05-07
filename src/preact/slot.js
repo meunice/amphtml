@@ -45,14 +45,15 @@ export function Slot(props) {
   const ref = useRef(null);
   const slotProps = {...props, ref};
   useEffect(() => {
-    const slot = dev().assertElement(ref.current);
+    const {current} = dev().assertElement(ref);
+    const slot = dev().assertElement(current);
     const assignedElements = getAssignedElements(props, slot);
     slot.__assignedElements = assignedElements;
 
     // TBD: Just for debug for now. but maybe can also be used for hydration?
     slot.setAttribute('i-amphtml-context', JSON.stringify(context));
     // TODO: remove debug info.
-    assignedElements.forEach(node => {
+    assignedElements.forEach((node) => {
       node.__assignedSlot = slot;
       node.setAttribute('i-amphtml-context', JSON.stringify(context));
     });
@@ -64,7 +65,7 @@ export function Slot(props) {
       //    `hidden`. Similarly do other attributes.
       // 2. Re-propagate click events to slots since React stops propagation.
       //    See https://github.com/facebook/react/issues/9242.
-      assignedElements.forEach(node => {
+      assignedElements.forEach((node) => {
         // Basic attributes:
         const {attributes} = slot;
         for (let i = 0, l = attributes.length; i < l; i++) {
@@ -88,7 +89,7 @@ export function Slot(props) {
         toggleAttribute(node, 'expanded', slot.hasAttribute('expanded'));
         if (!node['i-amphtml-event-distr']) {
           node['i-amphtml-event-distr'] = true;
-          node.addEventListener('click', e => {
+          node.addEventListener('click', (e) => {
             // Stop propagation on the original event to avoid deliving this
             // event twice with frameworks that correctly work with composed
             // boundaries.
@@ -110,11 +111,11 @@ export function Slot(props) {
       slot['i-amphtml-context'] = context;
       // TODO: Switch to fast child-node discover. See Revamp for the algo.
       const affectedNodes = [];
-      assignedElements.forEach(node => {
+      assignedElements.forEach((node) => {
         node['i-amphtml-context'] = context;
         affectedNodes.push.apply(affectedNodes, getAmpElements(node));
       });
-      affectedNodes.forEach(node => {
+      affectedNodes.forEach((node) => {
         const event = new Event('i-amphtml-context-changed', {
           bubbles: false,
           cancelable: true,
@@ -136,12 +137,13 @@ export function Slot(props) {
   // run every render.
   useMountEffect(() => {
     return () => {
-      const slot = dev().assertElement(ref.current);
+      const {current} = dev().assertElement(ref);
+      const slot = dev().assertElement(current);
       const affectedNodes = [];
-      getAssignedElements(props, slot).forEach(node => {
+      getAssignedElements(props, slot).forEach((node) => {
         affectedNodes.push.apply(affectedNodes, getAmpElements(node));
       });
-      affectedNodes.forEach(node => {
+      affectedNodes.forEach((node) => {
         const event = new Event('i-amphtml-unmounted', {
           bubbles: false,
           cancelable: true,

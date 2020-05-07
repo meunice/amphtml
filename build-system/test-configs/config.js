@@ -121,6 +121,7 @@ const presubmitGlobs = [
   '!validator/nodejs/node_modules/**/*.*',
   '!validator/webui/dist/**/*.*',
   '!validator/webui/node_modules/**/*.*',
+  '!build-system/server/new-server/transforms/dist/**/*.*',
   '!build-system/tasks/e2e/node_modules/**/*.*',
   '!build-system/tasks/presubmit-checks.js',
   '!build-system/runner/build/**/*.*',
@@ -158,7 +159,7 @@ const prettifyGlobs = [
   '**/OWNERS',
   '**/*.md',
   '!.github/ISSUE_TEMPLATE/**',
-  '!**/{node_modules,build,dist,dist.3p,dist.tools}/**',
+  '!**/{node_modules,build,dist,dist.3p,dist.tools,.karma-cache}/**',
 ];
 
 /**
@@ -167,7 +168,7 @@ const prettifyGlobs = [
  */
 const linkCheckGlobs = [
   '**/*.md',
-  '!**/{examples,node_modules,build,dist,dist.3p,dist.tools}/**',
+  '!**/{examples,node_modules,build,dist,dist.3p,dist.tools,.karma-cache}/**',
 ];
 
 /**

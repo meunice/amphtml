@@ -52,11 +52,15 @@ export function SocialShare(props) {
       throw new Error('Clicked before href is set.');
     }
     if (startsWith(href, 'navigator-share:')) {
-      if (navigator.share !== undefined) {
-        throw new Error('navigator.share disappeared.');
+      if (!navigator.share) {
+        throw new Error('no navigator.share');
       }
-      // navigator.share() fails 'gulp check-types' validation on Travis
-      navigator['share'](parseQueryString(href.substr(href.indexOf('?'))));
+      const dataStr = href.substr(href.indexOf('?'));
+      const data = parseQueryString(dataStr);
+      navigator.share(data).catch(() => {
+        // TODO(alanorozco): Warn here somehow.
+        // warn(TAG, e.message, dataStr);
+      });
     } else {
       const windowFeatures = 'resizable,scrollbars,width=640,height=480';
       openWindowDialog(window, href, target, windowFeatures);
@@ -79,6 +83,7 @@ export function SocialShare(props) {
       onClick={handleActivation}
       style={{...size, ...props['style']}}
       {...props}
+      aria-label={`amp-social-share component of type: ${type}`}
     >
       <SocialShareIcon
         style={{...backgroundStyle, ...baseStyle, ...size}}
